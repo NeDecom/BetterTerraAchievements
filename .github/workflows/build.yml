@@ -37,10 +37,15 @@ jobs:
           } else {
             Write-Host "НЕ НАЙДЕН! Структура архива другая."
           }
+
+
           
       - name: Build mod
         shell: pwsh
+        env:
+          TML_MODS_PATH: ${{ github.workspace }}\mods_output
         run: |
+          New-Item -ItemType Directory -Force -Path "$env:TML_MODS_PATH"
           dotnet build -c Release -p:tModLoaderPath="${{ github.workspace }}\tModLoader"
 
       - name: Upload .tmod
