@@ -37,6 +37,7 @@ jobs:
           } else {
             Write-Host "НЕ НАЙДЕН! Структура архива другая."
           }
+          Remove-Item -Path "tModLoader\tModLoader.pdb" -Force -ErrorAction SilentlyContinue
           
       - name: Build mod
         shell: pwsh
