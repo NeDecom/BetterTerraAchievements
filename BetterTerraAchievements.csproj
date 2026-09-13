@@ -1,18 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="$(tModLoaderPath)\tMLMod.targets"/>
+  <Import Project="$(tModLoaderPath)\tMLMod.targets" />
   <PropertyGroup>
     <AssemblyName>BetterTerraAchievements</AssemblyName>
     <TargetFramework>net8.0</TargetFramework>
     <DebugType>none</DebugType>
     <DebugSymbols>false</DebugSymbols>
-    <ItemGroup>
-      <None Remove="**\*.pdb" />
-      <None Remove="**\tModLoader.dll" />
-      <None Remove="**\tModLoader.xml" />
-      <None Remove="**\Libraries\**" />
-      <None Remove="**\tModPorter\**" />
-      <None Remove="**\*.bat" />
-      <None Remove="**\*.sh" />
-    </ItemGroup>
   </PropertyGroup>
+  <ItemGroup>
+    <None Remove="**\*.pdb" />
+    <None Remove="**\tModLoader.dll" />
+    <None Remove="**\tModLoader.xml" />
+    <None Remove="**\Libraries\**" />
+    <None Remove="**\tModPorter\**" />
+    <None Remove="**\*.bat" />
+    <None Remove="**\*.sh" />
+  </ItemGroup>
 </Project>
