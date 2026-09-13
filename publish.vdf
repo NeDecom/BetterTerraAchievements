@@ -1,0 +1,17 @@
+"workshopitem"
+{
+"appid" "1281930"
+"publishedfileid" "2615761271"
+"contentfolder" "/home/runner/work/tModLoader/tModLoader/artifacts/ExampleMod/Workshop"
+"changenote" "Automatic update from GitHub for tModLoader v2026.8: https://github.com/tModLoader/tModLoader/compare/b596b760ee90...2a633b0bcc83"
+"description" "[quote=GithubActions(Don't Modify)]Version Summary 2026.8.2.1:2026.8.2.1;2022.9.48.2:2022.9.48.2;2026.4.3.0:2026.4.3.0;2026.6.3.6:2026.6.3.6;2026.7.3.0:2026.7.3.0[/quote]Learn how to mod with tModLoader by exploring the source code for this mod.
+
+You can find the source code at https://github.com/tModLoader/tModLoader/tree/1.4.4/ExampleMod
+
+You can interpolate these values into a mod description:
+- ModVersion: 2026.8.2.1
+- ModHomepage: https://tmodloader.net/
+- tMLVersion: 2026.8
+- tMLBuildPurpose: Dev[quote=tModLoader ]
+Developed By [/quote]"
+}
