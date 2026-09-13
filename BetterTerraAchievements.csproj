@@ -3,5 +3,7 @@
   <PropertyGroup>
     <AssemblyName>BetterTerraAchievements</AssemblyName>
     <TargetFramework>net8.0</TargetFramework>
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
 </Project>
