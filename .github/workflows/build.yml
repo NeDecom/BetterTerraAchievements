@@ -1,1 +1,36 @@
+name: Build tModLoader Mod
 
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 6
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '6.0.x'
+
+      - name: Download tModLoader (Windows)
+        shell: pwsh
+        run:
+          Invoke-WebRequest -Uri "https://github.com/tModLoader/tModLoader/releases/download/v2026.08.2.1/tModLoader.zip" -OutFile "tModLoader.zip"
+          Expand-Archive -Path "tModLoader.zip" -DestinationPath "tModLoader" -Force
+
+      - name: Build mod
+        shell: pwsh
+        run: |
+          dotnet build -c Release -p:tModLoaderPath="${{ github.workspace }}\tModLoader"
+
+      - name: Upload .tmod
+        uses: actions/upload-artifact@v4
+        with:
+          name: mod-file
+          path: '**/*.tmod'
