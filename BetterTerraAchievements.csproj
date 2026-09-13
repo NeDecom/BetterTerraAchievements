@@ -3,7 +3,5 @@
   <PropertyGroup>
     <AssemblyName>BetterTerraAchievements</AssemblyName>
     <TargetFramework>net8.0</TargetFramework>
-    <LangVersion>latest</LangVersion>
-    <ModName>BetterTerraAchievements</ModName>
   </PropertyGroup>
 </Project>
