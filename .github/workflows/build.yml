@@ -58,5 +58,5 @@ jobs:
           name: mod-file
           path: |
             **/*.tmod
-            ${{ github.workspace }}/mods_output/*.tmod
+            C:\Users\runneradmin\Documents\My Games\Terraria\tModLoader\Mods\*.tmod
           if-no-files-found: warn
