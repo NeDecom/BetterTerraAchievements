@@ -1,5 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="..\tModLoader.targets" />
+  <Import Project="$(tModLoaderPath)\tModLoader.targets" />
   <PropertyGroup>
     <AssemblyName>BetterTerraAchievements</AssemblyName>
     <TargetFramework>net6.0</TargetFramework>
