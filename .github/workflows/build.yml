@@ -52,11 +52,19 @@ jobs:
           Write-Host "=== Поиск .tmod по системе ==="
           Get-ChildItem -Path "C:\Users\runneradmin\Documents" -Recurse -Filter "*.tmod" -ErrorAction SilentlyContinue | Select-Object FullName
 
+      - name: Copy tmod to workspace
+        shell: pwsh
+        run: |
+          $source = "C:\Users\runneradmin\Documents\My Games\Terraria\tModLoader\Mods\BetterTerraAchievements.tmod"
+          $dest = "${{ github.workspace }}\output"
+          New-Item -ItemType Directory -Force -Path $dest
+          Copy-Item -Path $source -Destination $dest -Force
+          Write-Host "=== Скопировано: ==="
+          Get-ChildItem -Path $dest | Select-Object FullName
+
       - name: Upload .tmod
         uses: actions/upload-artifact@v4
         with:
           name: mod-file
-          path: |
-            **/*.tmod
-            C:\Users\runneradmin\Documents\My Games\Terraria\tModLoader\Mods\*.tmod
-          if-no-files-found: warn
+          path: output/*.tmod
+          if-no-files-found: error
