@@ -60,11 +60,11 @@ jobs:
           New-Item -ItemType Directory -Force -Path $dest
           Copy-Item -Path $source -Destination $dest -Force
           Write-Host "=== Скопировано: ==="
-          Get-ChildItem -Path $dest | Select-Object FullName
+          Get-ChildItem -Path $dest | Select-Object Name, Length
 
       - name: Upload .tmod
         uses: actions/upload-artifact@v4
         with:
           name: mod-file
-          path: output/*.tmod
+          path: output/BetterTerraAchievements.tmod
           if-no-files-found: error
