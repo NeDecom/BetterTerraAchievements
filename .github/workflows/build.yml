@@ -23,7 +23,18 @@ jobs:
         run: |
           Invoke-WebRequest -Uri "https://github.com/tModLoader/tModLoader/releases/download/v2026.08.2.1/tModLoader.zip" -OutFile "tModLoader.zip"
           Expand-Archive -Path "tModLoader.zip" -DestinationPath "tModLoader" -Force
-
+          Write-Host "--- Ищем tModLoader.targets ---"
+          $target = Get-ChildItem -Path "tModLoader" -Recurse -Filter "tModLoader.targets" | Select-Object -First 1
+          if ($target) {
+            Write-Host "Найден: $($target.FullName)"
+            $sourceDir = $target.DirectoryName
+            # Копируем всё из вложенной папки в tModLoader (корень)
+            Copy-Item -Path "$sourceDir\*" -Destination "tModLoader" -Recurse -Force
+          } else {
+            Write-Host "tModLoader.targets НЕ найден!"
+            Get-ChildItem -Path "tModLoader" -Recurse -Depth 2 | Select-Object FullName
+          }
+          
       - name: Build mod
         shell: pwsh
         run: |
