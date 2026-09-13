@@ -44,6 +44,14 @@ jobs:
           New-Item -ItemType Directory -Force -Path "${{ github.workspace }}\mods_output"
           dotnet build -c Release -p:tModLoaderPath="${{ github.workspace }}\tModLoader" -p:ModsPath="${{ github.workspace }}\mods_output"
 
+      - name: Find tmod
+        shell: pwsh
+        run: |
+          Write-Host "=== mods_output ==="
+          Get-ChildItem -Path "${{ github.workspace }}\mods_output" -Recurse -ErrorAction SilentlyContinue | Select-Object FullName
+          Write-Host "=== Поиск .tmod по системе ==="
+          Get-ChildItem -Path "C:\Users\runneradmin\Documents" -Recurse -Filter "*.tmod" -ErrorAction SilentlyContinue | Select-Object FullName
+
       - name: Upload .tmod
         uses: actions/upload-artifact@v4
         with:
