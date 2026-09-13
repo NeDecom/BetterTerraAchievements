@@ -25,6 +25,15 @@ jobs:
           Write-Host "=== Размер архива ==="
           Get-Item "tModLoader.zip" | Select-Object Length, FullName
           Expand-Archive -Path "tModLoader.zip" -DestinationPath "tModLoader" -Force
+          Remove-Item -Path "tModLoader\tModLoader.pdb" -Force -ErrorAction SilentlyContinue
+          Remove-Item -Path "tModLoader\tModLoader.dll" -Force -ErrorAction SilentlyContinue
+          Remove-Item -Path "tModLoader\tModLoader.xml" -Force -ErrorAction SilentlyContinue
+          Remove-Item -Path "tModLoader\Libraries" -Recurse -Force -ErrorAction SilentlyContinue
+          Remove-Item -Path "tModLoader\tModPorter" -Recurse -Force -ErrorAction SilentlyContinue
+          Remove-Item -Path "tModLoader\DedicatedServerUtils" -Recurse -Force -ErrorAction SilentlyContinue
+          Remove-Item -Path "tModLoader\LaunchUtils" -Recurse -Force -ErrorAction SilentlyContinue
+          Remove-Item -Path "tModLoader\*.bat" -Force -ErrorAction SilentlyContinue
+          Remove-Item -Path "tModLoader\*.sh" -Force -ErrorAction SilentlyContinue
           Write-Host "=== Содержимое папки tModLoader (всё, рекурсивно) ==="
           Get-ChildItem -Path "tModLoader" -Recurse | Select-Object FullName
           Write-Host "=== Ищем tModLoader.targets ==="
