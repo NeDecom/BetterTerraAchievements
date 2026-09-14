@@ -2,9 +2,7 @@
   <Import Project="$(tModLoaderPath)\tMLMod.targets" />
   <PropertyGroup>
     <AssemblyName>BetterTerraAchievements</AssemblyName>
-    <TargetFramework>net8.0</TargetFramework>
-    <DebugType>none</DebugType>
-    <DebugSymbols>false</DebugSymbols>
-    <ModSourcePath>$(MSBuildProjectDirectory)</ModSourcePath>
+    <TargetFramework>net6.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 </Project>
