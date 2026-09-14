@@ -21,32 +21,8 @@ jobs:
       - name: Download tModLoader (Windows)
         shell: pwsh
         run: |
-          Invoke-WebRequest -Uri "https://github.com/tModLoader/tModLoader/releases/download/v2026.06.3.2/tModLoader.zip" -OutFile "tModLoader.zip"
-          Write-Host "=== Размер архива ==="
-          Get-Item "tModLoader.zip" | Select-Object Length, FullName
+          Invoke-WebRequest -Uri "https://github.com/tModLoader/tModLoader/releases/download/v2026.06.3.2/tModLoader_Windows.zip" -OutFile "tModLoader.zip"
           Expand-Archive -Path "tModLoader.zip" -DestinationPath "tModLoader" -Force
-          Remove-Item -Path "tModLoader\tModLoader.pdb" -Force -ErrorAction SilentlyContinue
-          Remove-Item -Path "tModLoader\tModLoader.dll" -Force -ErrorAction SilentlyContinue
-          Remove-Item -Path "tModLoader\tModLoader.xml" -Force -ErrorAction SilentlyContinue
-          Remove-Item -Path "tModLoader\Libraries" -Recurse -Force -ErrorAction SilentlyContinue
-          Remove-Item -Path "tModLoader\tModPorter" -Recurse -Force -ErrorAction SilentlyContinue
-          Remove-Item -Path "tModLoader\DedicatedServerUtils" -Recurse -Force -ErrorAction SilentlyContinue
-          Remove-Item -Path "tModLoader\LaunchUtils" -Recurse -Force -ErrorAction SilentlyContinue
-          Remove-Item -Path "tModLoader\*.bat" -Force -ErrorAction SilentlyContinue
-          Remove-Item -Path "tModLoader\*.sh" -Force -ErrorAction SilentlyContinue
-          Write-Host "=== Содержимое папки tModLoader (всё, рекурсивно) ==="
-          Get-ChildItem -Path "tModLoader" -Recurse | Select-Object FullName
-          Write-Host "=== Ищем tModLoader.targets ==="
-          $target = Get-ChildItem -Path "tModLoader" -Recurse -Filter "tModLoader.targets" -ErrorAction SilentlyContinue
-          if ($target) {
-          Write-Host "НАЙДЕН: $($target.FullName)"
-          $sourceDir = $target.DirectoryName
-          Write-Host "Копирую из $sourceDir в tModLoader..."
-          Copy-Item -Path "$sourceDir\*" -Destination "tModLoader" -Recurse -Force
-          } else {
-            Write-Host "НЕ НАЙДЕН! Структура архива другая."
-          }
-          Remove-Item -Path "tModLoader\tModLoader.pdb" -Force -ErrorAction SilentlyContinue
           
       - name: Build mod
         shell: pwsh
