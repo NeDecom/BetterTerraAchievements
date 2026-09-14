@@ -38,6 +38,24 @@ jobs:
           Write-Host "=== Поиск .tmod по системе ==="
           Get-ChildItem -Path "C:\Users\runneradmin\Documents" -Recurse -Filter "*.tmod" -ErrorAction SilentlyContinue | Select-Object FullName
 
+      - name: Clean tmod
+        shell: pwsh
+        run: |
+          $tmod = "C:\Users\runneradmin\Documents\My Games\Terraria\tModLoader\Mods\BetterTerraAchievements.tmod"
+          $temp = "${{ github.workspace }}\clean"
+          Expand-Archive -Path $tmod -DestinationPath $temp -Force
+          Write-Host "=== До очистки: ==="
+          Get-ChildItem -Path $temp -Recurse | Select-Object FullName
+          # Удаляем всё, кроме Content, build.txt, icon.png, description.txt и .dll мода
+          Get-ChildItem -Path $temp -Exclude "Content","build.txt","icon.png","description.txt","BetterTerraAchievements.dll" | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+          Get-ChildItem -Path "$temp\Content" -Recurse -Include "*.pdb","*.xml","*.bat","*.sh" | Remove-Item -Force -ErrorAction SilentlyContinue
+          Write-Host "=== После очистки: ==="
+          Get-ChildItem -Path $temp -Recurse | Select-Object FullName
+          # Запаковываем обратно
+          Remove-Item -Path $tmod -Force
+          Compress-Archive -Path "$temp\*" -DestinationPath $tmod -Force
+          Write-Host "=== Новый размер: $((Get-Item $tmod).Length) байт ==="
+
       - name: Copy tmod to workspace
         shell: pwsh
         run: |
