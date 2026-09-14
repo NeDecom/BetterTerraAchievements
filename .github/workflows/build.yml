@@ -30,8 +30,8 @@ jobs:
       - name: Install native dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libfna3d0 libsdl2-2.0-0 libopenal1
-
+          sudo apt-get install -y libsdl2-2.0-0 libopenal1 libgl1-mesa-glx
+    
       - name: Build mod
         run: |
           dotnet build -c Release -p:tModLoaderPath="$(pwd)/../tmod"
