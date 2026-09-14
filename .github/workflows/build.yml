@@ -21,15 +21,15 @@ jobs:
       - name: Download tModLoader (Windows)
         shell: pwsh
         run: |
-          Invoke-WebRequest -Uri "https://github.com/tModLoader/tModLoader/releases/download/v2026.07.3.0/tModLoader.zip" -OutFile "tModLoader.zip"
-          Expand-Archive -Path "tModLoader.zip" -DestinationPath "tModLoader" -Force
-          
+          Invoke-WebRequest -Uri "https://github.com/tModLoader/tModLoader/releases/download/v2026.07.3.0/tModLoader_Windows.zip" -OutFile "tModLoader.zip"
+          Expand-Archive -Path "tModLoader.zip" -DestinationPath "${{ runner.temp }}\tModLoader" -Force          
+      
       - name: Build mod
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path "${{ github.workspace }}\mods_output"
-          dotnet build -c Release -p:tModLoaderPath="${{ github.workspace }}\tModLoader" -p:ModsPath="${{ github.workspace }}\mods_output"
-
+          dotnet build -c Release -p:tModLoaderPath="${{ runner.temp }}\tModLoader" -p:ModsPath="${{ github.workspace }}\mods_output"
+    
       - name: Find tmod
         shell: pwsh
         run: |
