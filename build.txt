@@ -1,3 +1,4 @@
 displayName = Better Terra Achievements
 author = Decom
 version = 1.0.0
+buildIgnore = *.csproj, .git*, bin\*, obj\*, .vs\*, Libraries\*, *.dll, *.pdb, *.bat, *.sh, *.xml
