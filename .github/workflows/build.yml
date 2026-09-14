@@ -30,10 +30,24 @@ jobs:
           New-Item -ItemType Directory -Force -Path "${{ github.workspace }}\mods_output"
           dotnet build -c Release -p:tModLoaderPath="${{ runner.temp }}\tModLoader" -p:ModsPath="${{ github.workspace }}\mods_output"
 
+      - name: Find tmod
+        id: find_tmod
+        shell: pwsh
+        run: |
+          $found = Get-ChildItem -Path "C:\Users\runneradmin\Documents" -Recurse -Filter "*.tmod" -ErrorAction SilentlyContinue | Select-Object -First 1
+          if ($found) {
+            Write-Host "Найден: $($found.FullName)"
+            echo "TMOD_PATH=$($found.FullName)" >> $env:GITHUB_OUTPUT
+          } else {
+            Write-Host "Не найден!"
+            exit 1
+          }
+
       - name: Clean tmod
         shell: pwsh
         run: |
-          $tmod = "C:\Users\runneradmin\Documents\My Games\Terraria\tModLoader\Mods\BetterTerraAchievements.tmod"
+          $tmod = "${{ steps.find_tmod.outputs.TMOD_PATH }}"
+          Write-Host "Чистим: $tmod"
           $temp = "${{ github.workspace }}\clean"
           if (Test-Path $temp) { Remove-Item -Path $temp -Recurse -Force }
           New-Item -ItemType Directory -Force -Path $temp | Out-Null
@@ -64,14 +78,6 @@ jobs:
           Compress-Archive -Path "$temp\*" -DestinationPath $tmod -Force
           Write-Host "=== Новый размер: $((Get-Item $tmod).Length) байт ==="
     
-      - name: Find tmod
-        shell: pwsh
-        run: |
-          Write-Host "=== mods_output ==="
-          Get-ChildItem -Path "${{ github.workspace }}\mods_output" -Recurse -ErrorAction SilentlyContinue | Select-Object FullName
-          Write-Host "=== Поиск .tmod по системе ==="
-          Get-ChildItem -Path "C:\Users\runneradmin\Documents" -Recurse -Filter "*.tmod" -ErrorAction SilentlyContinue | Select-Object FullName
-  
       - name: Copy tmod to workspace
         shell: pwsh
         run: |
