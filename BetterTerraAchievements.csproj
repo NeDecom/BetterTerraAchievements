@@ -5,15 +5,6 @@
     <TargetFramework>net8.0</TargetFramework>
     <DebugType>none</DebugType>
     <DebugSymbols>false</DebugSymbols>
+    <ModSourcePath>$(MSBuildProjectDirectory)</ModSourcePath>
   </PropertyGroup>
-  <ItemGroup>
-    <None Remove="**\*.pdb" />
-    <None Remove="**\tModLoader.dll" />
-    <None Remove="**\tModLoader.xml" />
-    <None Remove="**\Libraries\**" />
-    <None Remove="**\tModPorter\**" />
-    <None Remove="**\*.bat" />
-    <None Remove="**\*.sh" />
-  </ItemGroup>
-<ModSourcePath>$(MSBuildProjectDirectory)</ModSourcePath>
 </Project>
