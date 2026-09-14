@@ -15,4 +15,5 @@
     <None Remove="**\*.bat" />
     <None Remove="**\*.sh" />
   </ItemGroup>
+<ModSourcePath>$(MSBuildProjectDirectory)</ModSourcePath>
 </Project>
