@@ -28,7 +28,6 @@ jobs:
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path "${{ github.workspace }}\mods_output"
-          Remove-Item -Path "C:\Users\runneradmin\Documents\My Games\Terraria\tModLoader\Mods\*.tmod" -Force -ErrorAction SilentlyContinue
           dotnet build -c Release -p:tModLoaderPath="${{ github.workspace }}\tModLoader" -p:ModsPath="${{ github.workspace }}\mods_output"
 
       - name: Find tmod
