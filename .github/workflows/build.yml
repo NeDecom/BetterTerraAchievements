@@ -44,8 +44,7 @@ jobs:
           if (Test-Path $temp) { Remove-Item -Path $temp -Recurse -Force }
           New-Item -ItemType Directory -Force -Path $temp | Out-Null
 
-          # Распаковка через 7-Zip
-          & $sevenZip x $tmod -o"$temp" -y
+          & $sevenZip x $tmod -o"$temp" -y | Out-Null
 
           Write-Host "=== До очистки: ==="
           Get-ChildItem -Path $temp -Recurse | Select-Object FullName, Length
@@ -72,7 +71,6 @@ jobs:
           Write-Host "=== После очистки: ==="
           Get-ChildItem -Path $temp -Recurse | Select-Object FullName, Length
 
-          # Создаем очищенный .tmod в workspace
           $newTmod = "${{ github.workspace }}\output\BetterTerraAchievements.tmod"
           New-Item -ItemType Directory -Force -Path "${{ github.workspace }}\output" | Out-Null
           Push-Location $temp
@@ -80,10 +78,10 @@ jobs:
           Pop-Location
 
           Write-Host "=== Новый размер: $((Get-Item $newTmod).Length) байт ==="
-    
-          - name: Upload .tmod
-            uses: actions/upload-artifact@v4
-            with:
-              name: mod-file
-              path: output/BetterTerraAchievements.tmod
-              if-no-files-found: error
+
+      - name: Upload .tmod
+        uses: actions/upload-artifact@v4
+        with:
+          name: mod-file
+          path: output/BetterTerraAchievements.tmod
+          if-no-files-found: error
