@@ -37,43 +37,7 @@ jobs:
           Get-ChildItem -Path "${{ github.workspace }}\mods_output" -Recurse -ErrorAction SilentlyContinue | Select-Object FullName
           Write-Host "=== Поиск .tmod по системе ==="
           Get-ChildItem -Path "C:\Users\runneradmin\Documents" -Recurse -Filter "*.tmod" -ErrorAction SilentlyContinue | Select-Object FullName
-    
-      - name: Clean tmod
-        shell: pwsh
-        run: |
-          $tmod = "C:\Users\runneradmin\Documents\My Games\Terraria\tModLoader\Mods\BetterTerraAchievements.tmod"
-          $temp = "${{ github.workspace }}\clean"
-          if (Test-Path $temp) { Remove-Item -Path $temp -Recurse -Force }
-          New-Item -ItemType Directory -Force -Path $temp | Out-Null
-          Expand-Archive -Path $tmod -DestinationPath $temp -Force
-          Write-Host "=== До очистки: ==="
-          Get-ChildItem -Path $temp | Select-Object Name, Length
-          # Удаляем ТОЛЬКО известные лишние файлы и папки
-          $toRemove = @(
-           "tModLoader.dll", "tModLoader.pdb", "tModLoader.xml",
-           "tModLoader.deps.json", "tModLoader.runtimeconfig.json",
-           "tModLoader.runtimeconfig.dev.json", "tMLMod.targets",
-           "tModPorter.dll.config", "serverconfig.txt",
-           "RecentGitHubCommits.txt",
-           "start-tModLoader.bat", "start-tModLoader.sh",
-           "start-tModLoader-FamilyShare.bat", "start-tModLoader-FamilyShare.sh",
-           "start-tModLoaderServer.bat", "start-tModLoaderServer.sh",
-          "Libraries", "tModPorter", "DedicatedServerUtils", "LaunchUtils"
-          )
-          foreach ($item in $toRemove) {
-          $path = Join-Path $temp $item
-          if (Test-Path $path) {
-            Remove-Item -Path $path -Recurse -Force
-            Write-Host "Удалено: $item"
-           }
-          }
-          Write-Host "=== После очистки: ==="
-          Get-ChildItem -Path $temp -Recurse | Select-Object FullName, Length
-          # Запаковываем обратно
-          Remove-Item -Path $tmod -Force
-          Compress-Archive -Path "$temp\*" -DestinationPath $tmod -Force
-          Write-Host "=== Новый размер: $((Get-Item $tmod).Length) байт ==="
-
+  
       - name: Copy tmod to workspace
         shell: pwsh
         run: |
