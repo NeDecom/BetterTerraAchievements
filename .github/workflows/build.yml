@@ -7,90 +7,38 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
 
       - name: Setup .NET 6
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '6.0.x'
+          dotnet-version: 6.0.x
 
-      - name: Download tModLoader (Windows)
-        shell: pwsh
+      - name: Download tModLoader
         run: |
-          Invoke-WebRequest -Uri "https://github.com/tModLoader/tModLoader/releases/latest/download/tModLoader.zip" -OutFile "tModLoader.zip"
-          Expand-Archive -Path "tModLoader.zip" -DestinationPath "${{ runner.temp }}\tModLoader" -Force          
-      
+          cd ..
+          mkdir -p ./tmod
+          cd ./tmod
+          wget https://github.com/tModLoader/tModLoader/releases/latest/download/tModLoader.zip
+          unzip -o tModLoader.zip
+          cd ../${{ github.event.repository.name }}
+
       - name: Build mod
-        shell: pwsh
         run: |
-          New-Item -ItemType Directory -Force -Path "${{ github.workspace }}\mods_output"
-          dotnet build -c Release -p:tModLoaderPath="${{ runner.temp }}\tModLoader" -p:ModsPath="${{ github.workspace }}\mods_output"
+          dotnet build -c Release -p:tModLoaderPath="$(pwd)/../tmod"
 
       - name: Find tmod
-        id: find_tmod
-        shell: pwsh
         run: |
-          $found = Get-ChildItem -Path "C:\Users\runneradmin\Documents" -Recurse -Filter "*.tmod" -ErrorAction SilentlyContinue | Select-Object -First 1
-          if ($found) {
-            Write-Host "Найден: $($found.FullName)"
-            echo "TMOD_PATH=$($found.FullName)" >> $env:GITHUB_OUTPUT
-          } else {
-            Write-Host "Не найден!"
-            exit 1
-          }
-
-      - name: Clean tmod
-        shell: pwsh
-        run: |
-          $tmod = "${{ steps.find_tmod.outputs.TMOD_PATH }}"
-          Write-Host "Чистим: $tmod"
-          $temp = "${{ github.workspace }}\clean"
-          if (Test-Path $temp) { Remove-Item -Path $temp -Recurse -Force }
-          New-Item -ItemType Directory -Force -Path $temp | Out-Null
-          Expand-Archive -Path $tmod -DestinationPath $temp -Force
-          Write-Host "=== До очистки: ==="
-          Get-ChildItem -Path $temp | Select-Object Name, Length
-          $toRemove = @(
-            "tModLoader.dll", "tModLoader.pdb", "tModLoader.xml",
-            "tModLoader.deps.json", "tModLoader.runtimeconfig.json",
-            "tModLoader.runtimeconfig.dev.json", "tMLMod.targets",
-            "tModPorter.dll.config", "serverconfig.txt",
-            "RecentGitHubCommits.txt",
-            "start-tModLoader.bat", "start-tModLoader.sh",
-            "start-tModLoader-FamilyShare.bat", "start-tModLoader-FamilyShare.sh",
-            "start-tModLoaderServer.bat", "start-tModLoaderServer.sh",
-            "Libraries", "tModPorter", "DedicatedServerUtils", "LaunchUtils"
-          )
-          foreach ($item in $toRemove) {
-            $path = Join-Path $temp $item
-            if (Test-Path $path) {
-              Remove-Item -Path $path -Recurse -Force
-              Write-Host "Удалено: $item"
-            }
-          }
-          Write-Host "=== После очистки: ==="
-          Get-ChildItem -Path $temp -Recurse | Select-Object FullName, Length
-          Remove-Item -Path $tmod -Force
-          Compress-Archive -Path "$temp\*" -DestinationPath $tmod -Force
-          Write-Host "=== Новый размер: $((Get-Item $tmod).Length) байт ==="
-    
-      - name: Copy tmod to workspace
-        shell: pwsh
-        run: |
-          $source = "C:\Users\runneradmin\Documents\My Games\Terraria\tModLoader\Mods\BetterTerraAchievements.tmod"
-          $dest = "${{ github.workspace }}\output"
-          New-Item -ItemType Directory -Force -Path $dest
-          Copy-Item -Path $source -Destination $dest -Force
-          Write-Host "=== Скопировано: ==="
-          Get-ChildItem -Path $dest | Select-Object Name, Length
+          echo "=== Ищем .tmod ==="
+          find /home/runner -name "*.tmod" 2>/dev/null
 
       - name: Upload .tmod
         uses: actions/upload-artifact@v4
         with:
           name: mod-file
-          path: output/BetterTerraAchievements.tmod
+          path: '**/*.tmod'
           if-no-files-found: error
