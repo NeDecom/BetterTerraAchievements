@@ -72,17 +72,18 @@ jobs:
           Write-Host "=== После очистки: ==="
           Get-ChildItem -Path $temp -Recurse | Select-Object FullName, Length
 
-          # Удаляем старый .tmod и создаём новый через 7-Zip
-          Remove-Item -Path $tmod -Force
+          # Создаем очищенный .tmod в workspace
+          $newTmod = "${{ github.workspace }}\output\BetterTerraAchievements.tmod"
+          New-Item -ItemType Directory -Force -Path "${{ github.workspace }}\output" | Out-Null
           Push-Location $temp
-          & $sevenZip a -tzip $tmod "*" | Out-Null
+          & $sevenZip a -tzip $newTmod "*" | Out-Null
           Pop-Location
 
-          Write-Host "=== Новый размер: $((Get-Item $tmod).Length) байт ==="
+          Write-Host "=== Новый размер: $((Get-Item $newTmod).Length) байт ==="
     
-      - name: Upload .tmod
-        uses: actions/upload-artifact@v4
-        with:
-          name: mod-file
-          path: '**/*.tmod'
-          if-no-files-found: error
+          - name: Upload .tmod
+            uses: actions/upload-artifact@v4
+            with:
+              name: mod-file
+              path: output/BetterTerraAchievements.tmod
+              if-no-files-found: error
