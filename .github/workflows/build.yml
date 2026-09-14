@@ -29,12 +29,6 @@ jobs:
         run: |
           dotnet build -c Release -p:tModLoaderPath="${{ runner.temp }}\tModLoader"
 
-      - name: Find tmod
-        shell: pwsh
-        run: |
-          Write-Host "=== Ищем .tmod ==="
-          Get-ChildItem -Path "C:\Users\runneradmin\Documents" -Recurse -Filter "*.tmod" -ErrorAction SilentlyContinue | Select-Object FullName
-
       - name: Clean tmod
         shell: pwsh
         run: |
@@ -42,9 +36,13 @@ jobs:
           if (-not $tmod) { Write-Host "Не найден .tmod"; exit 1 }
           Write-Host "Чистим: $tmod"
           $temp = "${{ github.workspace }}\clean"
-          if (Test-Path $temp) { Remove-Item -Path $temp -Recurse -Force }
+          $zip = "${{ github.workspace }}\temp.zip"
+                if (Test-Path $temp) { Remove-Item -Path $temp -Recurse -Force }
+                if (Test-Path $zip) { Remove-Item -Path $zip -Force }
           New-Item -ItemType Directory -Force -Path $temp | Out-Null
-          Expand-Archive -Path $tmod -DestinationPath $temp -Force
+          # Переименовываем .tmod в .zip, чтобы Expand-Archive его понял
+                Copy-Item -Path $tmod -Destination $zip -Force
+                Expand-Archive -Path $zip -DestinationPath $temp -Force
           Write-Host "=== До очистки: ==="
           Get-ChildItem -Path $temp | Select-Object Name, Length
           $toRemove = @(
@@ -67,10 +65,12 @@ jobs:
           }
           Write-Host "=== После очистки: ==="
           Get-ChildItem -Path $temp -Recurse | Select-Object FullName, Length
+          # Запаковываем обратно и переименовываем в .tmod
           Remove-Item -Path $tmod -Force
-          Compress-Archive -Path "$temp\*" -DestinationPath $tmod -Force
+          Compress-Archive -Path "$temp\*" -DestinationPath $zip -Force
+          Move-Item -Path $zip -Destination $tmod -Force
           Write-Host "=== Новый размер: $((Get-Item $tmod).Length) байт ==="
-
+    
       - name: Upload .tmod
         uses: actions/upload-artifact@v4
         with:
