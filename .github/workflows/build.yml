@@ -32,17 +32,20 @@ jobs:
       - name: Clean tmod
         shell: pwsh
         run: |
-          Add-Type -AssemblyName System.IO.Compression.FileSystem
+          $sevenZip = "C:\Program Files\7-Zip\7z.exe"
+          if (-not (Test-Path $sevenZip)) { $sevenZip = "7z" }
+
           $tmod = (Get-ChildItem -Path "C:\Users\runneradmin\Documents" -Recurse -Filter "*.tmod" -ErrorAction SilentlyContinue | Select-Object -First 1).FullName
           if (-not $tmod) { Write-Host "Не найден .tmod"; exit 1 }
           Write-Host "Чистим: $tmod"
           Write-Host "Размер до очистки: $((Get-Item $tmod).Length) байт"
+
           $temp = "${{ github.workspace }}\clean"
           if (Test-Path $temp) { Remove-Item -Path $temp -Recurse -Force }
           New-Item -ItemType Directory -Force -Path $temp | Out-Null
 
-          # Распаковка через .NET (работает с .tmod напрямую)
-          [System.IO.Compression.ZipFile]::ExtractToDirectory($tmod, $temp)
+          # Распаковка через 7-Zip
+          & $sevenZip x $tmod -o"$temp" -y
 
           Write-Host "=== До очистки: ==="
           Get-ChildItem -Path $temp -Recurse | Select-Object FullName, Length
@@ -69,9 +72,11 @@ jobs:
           Write-Host "=== После очистки: ==="
           Get-ChildItem -Path $temp -Recurse | Select-Object FullName, Length
 
-          # Удаляем старый .tmod и создаём новый
+          # Удаляем старый .tmod и создаём новый через 7-Zip
           Remove-Item -Path $tmod -Force
-          [System.IO.Compression.ZipFile]::CreateFromDirectory($temp, $tmod)
+          Push-Location $temp
+          & $sevenZip a -tzip $tmod "*" | Out-Null
+          Pop-Location
 
           Write-Host "=== Новый размер: $((Get-Item $tmod).Length) байт ==="
     
