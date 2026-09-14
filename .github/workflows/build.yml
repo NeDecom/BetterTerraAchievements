@@ -32,19 +32,21 @@ jobs:
       - name: Clean tmod
         shell: pwsh
         run: |
+          Add-Type -AssemblyName System.IO.Compression.FileSystem
           $tmod = (Get-ChildItem -Path "C:\Users\runneradmin\Documents" -Recurse -Filter "*.tmod" -ErrorAction SilentlyContinue | Select-Object -First 1).FullName
           if (-not $tmod) { Write-Host "Не найден .tmod"; exit 1 }
           Write-Host "Чистим: $tmod"
+          Write-Host "Размер до очистки: $((Get-Item $tmod).Length) байт"
           $temp = "${{ github.workspace }}\clean"
-          $zip = "${{ github.workspace }}\temp.zip"
-                if (Test-Path $temp) { Remove-Item -Path $temp -Recurse -Force }
-                if (Test-Path $zip) { Remove-Item -Path $zip -Force }
+          if (Test-Path $temp) { Remove-Item -Path $temp -Recurse -Force }
           New-Item -ItemType Directory -Force -Path $temp | Out-Null
-          # Переименовываем .tmod в .zip, чтобы Expand-Archive его понял
-                Copy-Item -Path $tmod -Destination $zip -Force
-                Expand-Archive -Path $zip -DestinationPath $temp -Force
+
+          # Распаковка через .NET (работает с .tmod напрямую)
+          [System.IO.Compression.ZipFile]::ExtractToDirectory($tmod, $temp)
+
           Write-Host "=== До очистки: ==="
-          Get-ChildItem -Path $temp | Select-Object Name, Length
+          Get-ChildItem -Path $temp -Recurse | Select-Object FullName, Length
+
           $toRemove = @(
             "tModLoader.dll", "tModLoader.pdb", "tModLoader.xml",
             "tModLoader.deps.json", "tModLoader.runtimeconfig.json",
@@ -63,12 +65,14 @@ jobs:
               Write-Host "Удалено: $item"
             }
           }
+
           Write-Host "=== После очистки: ==="
           Get-ChildItem -Path $temp -Recurse | Select-Object FullName, Length
-          # Запаковываем обратно и переименовываем в .tmod
+
+          # Удаляем старый .tmod и создаём новый
           Remove-Item -Path $tmod -Force
-          Compress-Archive -Path "$temp\*" -DestinationPath $zip -Force
-          Move-Item -Path $zip -Destination $tmod -Force
+          [System.IO.Compression.ZipFile]::CreateFromDirectory($temp, $tmod)
+
           Write-Host "=== Новый размер: $((Get-Item $tmod).Length) байт ==="
     
       - name: Upload .tmod
