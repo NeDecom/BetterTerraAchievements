@@ -33,5 +33,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: mod-file
-          path: output/BetterTerraAchievements.tmod
+          path: '**/*.tmod'
           if-no-files-found: error
