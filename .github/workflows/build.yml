@@ -68,8 +68,18 @@ jobs:
             }
           }
 
+          # Чистим Content, оставляя только Items
+          $contentPath = Join-Path $temp "Content"
+          if (Test-Path $contentPath) {
+            Get-ChildItem -Path $contentPath -Exclude "Items" | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+            Write-Host "=== Content очищен, оставлена только Items ==="
+          }
+
           Write-Host "=== После очистки: ==="
           Get-ChildItem -Path $temp -Recurse | Select-Object FullName, Length
+
+          Write-Host "=== Корень .tmod: ==="
+          Get-ChildItem -Path $temp | Select-Object Name, Length
 
           $newTmod = "${{ github.workspace }}\output\BetterTerraAchievements.tmod"
           New-Item -ItemType Directory -Force -Path "${{ github.workspace }}\output" | Out-Null
